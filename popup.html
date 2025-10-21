@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vertical To Horizontal</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 300px;
+      padding: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #EFDFBB;
+      color: #722F37;
+    }
+
+    h1 {
+      font-size: 18px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .status {
+      background: rgba(114, 47, 55, 0.1);
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+      margin-bottom: 15px;
+      font-size: 14px;
+      border: 1px solid rgba(114, 47, 55, 0.2);
+    }
+
+    .status.active {
+      background: rgba(114, 47, 55, 0.2);
+      border: 1px solid #722F37;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 10px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.3s;
+      background: white;
+      color: #722F37;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(114, 47, 55, 0.3);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .shortcuts {
+      background: rgba(114, 47, 55, 0.1);
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 11px;
+      line-height: 1.6;
+      border: 1px solid rgba(114, 47, 55, 0.2);
+    }
+
+    .shortcuts strong {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .shortcut {
+      background: #722F37;
+      color: #EFDFBB;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+  <h1>↔️ Vertical To Horizontal</h1>
+
+  <div id="status" class="status">
+    <span id="statusText">Prêt</span>
+  </div>
+
+  <button id="pipBtn">Activer PiP</button>
+  <button id="orientationBtn">Activer Rotation</button>
+
+  <div class="shortcuts">
+    <strong>Raccourcis:</strong>
+    <span class="shortcut">⌘⇧P / Ctrl⇧P</span> PiP<br>
+    <span class="shortcut">⌘⇧R / Ctrl⇧R</span> Rotation
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+# Extension packaging
+*.crx
+*.pem
+*.zip
+
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+
+# Node (si vous ajoutez des outils de build plus tard)
+node_modules/
+package-lock.json
+yarn.lock
+
+# Temporary files
+*.tmp
+.cache/
