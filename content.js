@@ -52,6 +52,10 @@ function getVideo() {
   }
 
   if (window.location.hostname.includes('tiktok.com')) {
+    console.log('========================================');
+    console.log('🔍 [TikTok] DÉBUT DÉTECTION VIDÉO');
+    console.log('========================================');
+
     // Stratégie 1: Chercher un container marqué comme actif (comme YouTube avec [is-active])
     // TikTok utilise des attributs data-e2e pour marquer les éléments
 
@@ -67,18 +71,78 @@ function getVideo() {
       'div[style*="z-index"] video'
     ];
 
+    console.log('📋 Stratégie 1: Test des sélecteurs spécifiques...');
     for (const selector of activeSelectors) {
       const video = document.querySelector(selector);
+      console.log(`   - Selector: ${selector}`);
+      console.log(`     Résultat: ${video ? 'TROUVÉ' : 'RIEN'} ${video && video.videoWidth > 0 ? '(dimensions OK)' : video ? '(pas de dimensions)' : ''}`);
+
       if (video && video.videoWidth > 0) {
-        console.log(`[TikTok] ✅ Vidéo trouvée via: ${selector}`);
+        console.log(`✅ SÉLECTIONNÉ via stratégie 1: ${selector}`);
+        console.log(`   src: ${video.src || video.currentSrc || 'N/A'}`);
+        console.log(`   paused: ${video.paused}, time: ${video.currentTime.toFixed(2)}s`);
+        console.log('========================================');
         return video;
       }
     }
 
-    // Stratégie 2: Chercher la vidéo qui n'est PAS en aria-hidden
+    // Stratégie 2: Analyser TOUTES les vidéos
     const videos = document.querySelectorAll('video');
-    console.log(`[TikTok] ${videos.length} vidéos trouvées`);
+    console.log(`\n📋 Stratégie 2: Analyse de ${videos.length} vidéo(s) trouvée(s)`);
 
+    videos.forEach((video, index) => {
+      console.log(`\n   📹 Vidéo #${index + 1}:`);
+      console.log(`      - Dimensions: ${video.videoWidth}x${video.videoHeight}`);
+      console.log(`      - Paused: ${video.paused}`);
+      console.log(`      - CurrentTime: ${video.currentTime.toFixed(2)}s`);
+      console.log(`      - Src: ${(video.src || video.currentSrc || 'N/A').substring(0, 80)}...`);
+
+      // Vérifier les attributs du parent
+      let parent = video.parentElement;
+      let ariaHidden = false;
+      let hasDataE2E = false;
+      let parentInfo = [];
+
+      while (parent && parent !== document.body && parentInfo.length < 5) {
+        const aria = parent.getAttribute('aria-hidden');
+        const dataE2E = parent.getAttribute('data-e2e');
+
+        if (aria === 'true') {
+          ariaHidden = true;
+          parentInfo.push(`aria-hidden=true (${parent.tagName})`);
+        }
+        if (dataE2E) {
+          hasDataE2E = true;
+          parentInfo.push(`data-e2e="${dataE2E}" (${parent.tagName})`);
+        }
+
+        parent = parent.parentElement;
+      }
+
+      console.log(`      - Aria-hidden parent: ${ariaHidden ? '❌ OUI' : '✅ NON'}`);
+      console.log(`      - Data-e2e parent: ${hasDataE2E ? '✅ OUI' : '❌ NON'}`);
+      if (parentInfo.length > 0) {
+        console.log(`      - Parents: ${parentInfo.join(', ')}`);
+      }
+
+      // Position dans le viewport
+      const rect = video.getBoundingClientRect();
+      const centerY = window.innerHeight / 2;
+      const videoCenter = rect.top + rect.height / 2;
+      const distanceFromCenter = Math.abs(centerY - videoCenter);
+
+      const visibleTop = Math.max(0, rect.top);
+      const visibleBottom = Math.min(window.innerHeight, rect.bottom);
+      const visibleHeight = Math.max(0, visibleBottom - visibleTop);
+      const visibilityRatio = rect.height > 0 ? visibleHeight / rect.height : 0;
+
+      console.log(`      - Position: top=${rect.top.toFixed(0)}px, center=${videoCenter.toFixed(0)}px`);
+      console.log(`      - Distance du centre écran: ${distanceFromCenter.toFixed(0)}px`);
+      console.log(`      - Visibilité: ${(visibilityRatio * 100).toFixed(1)}%`);
+    });
+
+    // Chercher la vidéo qui n'est PAS en aria-hidden ET qui joue
+    console.log('\n🔍 Recherche vidéo: NOT aria-hidden + playing...');
     for (const video of videos) {
       if (video.videoWidth === 0) continue;
 
@@ -95,16 +159,22 @@ function getVideo() {
       }
 
       if (!isHidden && !video.paused) {
-        console.log('[TikTok] ✅ Vidéo active trouvée (not aria-hidden, playing)');
+        console.log(`✅ SÉLECTIONNÉ via stratégie 2 (not aria-hidden + playing)`);
+        console.log(`   src: ${(video.src || video.currentSrc || 'N/A').substring(0, 80)}...`);
+        console.log(`   time: ${video.currentTime.toFixed(2)}s`);
+        console.log('========================================');
         return video;
       }
     }
 
     // Stratégie 3: Ratio de visibilité (fallback)
+    console.log('\n📋 Stratégie 3: Fallback sur visibilité...');
     let bestVideo = null;
     let bestVisibilityRatio = 0;
+    let bestIndex = -1;
 
-    for (const video of videos) {
+    for (let i = 0; i < videos.length; i++) {
+      const video = videos[i];
       if (video.videoWidth === 0) continue;
 
       const rect = video.getBoundingClientRect();
@@ -118,15 +188,21 @@ function getVideo() {
       if (visibilityRatio > bestVisibilityRatio) {
         bestVisibilityRatio = visibilityRatio;
         bestVideo = video;
+        bestIndex = i;
       }
     }
 
     if (bestVideo) {
-      console.log(`[TikTok] Fallback visibility: ${(bestVisibilityRatio * 100).toFixed(1)}%`);
+      console.log(`✅ SÉLECTIONNÉ via stratégie 3 (fallback visibilité)`);
+      console.log(`   Vidéo #${bestIndex + 1} avec ${(bestVisibilityRatio * 100).toFixed(1)}% de visibilité`);
+      console.log(`   src: ${(bestVideo.src || bestVideo.currentSrc || 'N/A').substring(0, 80)}...`);
+      console.log('========================================');
       return bestVideo;
     }
 
     // Dernier fallback
+    console.log('⚠️ FALLBACK FINAL: Première vidéo trouvée');
+    console.log('========================================');
     return videos[0];
   }
 
