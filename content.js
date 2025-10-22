@@ -8,7 +8,7 @@ let sourceVideo = null;
 let animating = false;
 let originalStyle = null;
 
-console.log('[V2H] Extension chargée v9.1');
+console.log('[V2H] Extension chargée v9.0');
 
 // === DÉTECTION VIDÉO ===
 function getVideo() {
@@ -68,38 +68,30 @@ function animate() {
   const w = sourceVideo.videoWidth;
   const h = sourceVideo.videoHeight;
 
-  // Taille réduite de moitié pour le PiP
-  const targetW = w / 2;
-  const targetH = h / 2;
+  ctx.save();
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   if (isHorizontal && h > w) {
-    // Portrait → paysage (rotation -90°)
-    canvas.width = h / 2;
-    canvas.height = w / 2;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.save();
+    // Portrait → paysage
+    canvas.width = h;
+    canvas.height = w;
     ctx.translate(0, canvas.height);
-    ctx.rotate(-Math.PI / 2);
-    ctx.drawImage(sourceVideo, 0, 0, targetW, targetH);
-    ctx.restore();
+    ctx.rotate(-Math.PI/2);
+    ctx.drawImage(sourceVideo, 0, 0, w, h);
   } else if (!isHorizontal && w > h) {
-    // Paysage → portrait (rotation +90°)
-    canvas.width = h / 2;
-    canvas.height = w / 2;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.save();
+    // Paysage → portrait
+    canvas.width = h;
+    canvas.height = w;
     ctx.translate(canvas.width, 0);
-    ctx.rotate(Math.PI / 2);
-    ctx.drawImage(sourceVideo, 0, 0, targetW, targetH);
-    ctx.restore();
+    ctx.rotate(Math.PI/2);
+    ctx.drawImage(sourceVideo, 0, 0, w, h);
   } else {
-    // Pas de rotation
-    canvas.width = targetW;
-    canvas.height = targetH;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    canvas.width = w;
+    canvas.height = h;
     ctx.drawImage(sourceVideo, 0, 0, canvas.width, canvas.height);
   }
 
+  ctx.restore();
   requestAnimationFrame(animate);
 }
 
