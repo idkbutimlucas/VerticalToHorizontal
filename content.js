@@ -52,58 +52,81 @@ function getVideo() {
   }
 
   if (window.location.hostname.includes('tiktok.com')) {
-    // Nouvelle approche: trouver la vidéo avec le plus grand ratio de visibilité dans le viewport
+    // Stratégie 1: Chercher un container marqué comme actif (comme YouTube avec [is-active])
+    // TikTok utilise des attributs data-e2e pour marquer les éléments
+
+    // Essayer plusieurs sélecteurs spécifiques TikTok
+    const activeSelectors = [
+      // Container de l'item actif (sans aria-hidden)
+      '[data-e2e="recommend-list-item-container"]:not([aria-hidden="true"]) video',
+      // Container visible (TikTok cache les autres avec opacity)
+      '[data-e2e="recommend-list-item-container"]:not([style*="opacity: 0"]) video',
+      // Video player container
+      '[class*="DivPlayerContainer"] video',
+      // Chercher via le parent avec z-index le plus élevé (vidéo au premier plan)
+      'div[style*="z-index"] video'
+    ];
+
+    for (const selector of activeSelectors) {
+      const video = document.querySelector(selector);
+      if (video && video.videoWidth > 0) {
+        console.log(`[TikTok] ✅ Vidéo trouvée via: ${selector}`);
+        return video;
+      }
+    }
+
+    // Stratégie 2: Chercher la vidéo qui n'est PAS en aria-hidden
     const videos = document.querySelectorAll('video');
     console.log(`[TikTok] ${videos.length} vidéos trouvées`);
 
-    if (videos.length === 0) return null;
+    for (const video of videos) {
+      if (video.videoWidth === 0) continue;
 
-    // Calculer le ratio de visibilité pour chaque vidéo
+      // Remonter dans le DOM pour trouver si le container parent a aria-hidden="true"
+      let parent = video.parentElement;
+      let isHidden = false;
+
+      while (parent && parent !== document.body) {
+        if (parent.getAttribute('aria-hidden') === 'true') {
+          isHidden = true;
+          break;
+        }
+        parent = parent.parentElement;
+      }
+
+      if (!isHidden && !video.paused) {
+        console.log('[TikTok] ✅ Vidéo active trouvée (not aria-hidden, playing)');
+        return video;
+      }
+    }
+
+    // Stratégie 3: Ratio de visibilité (fallback)
     let bestVideo = null;
     let bestVisibilityRatio = 0;
 
     for (const video of videos) {
-      // Ignorer les vidéos sans dimensions
-      if (video.videoWidth === 0 || video.videoHeight === 0) continue;
+      if (video.videoWidth === 0) continue;
 
       const rect = video.getBoundingClientRect();
-
-      // Ignorer les vidéos complètement hors viewport
       if (rect.bottom < 0 || rect.top > window.innerHeight) continue;
 
-      // Calculer la hauteur visible de la vidéo dans le viewport
       const visibleTop = Math.max(0, rect.top);
       const visibleBottom = Math.min(window.innerHeight, rect.bottom);
       const visibleHeight = Math.max(0, visibleBottom - visibleTop);
-
-      // Calculer le ratio de visibilité (0 à 1)
       const visibilityRatio = visibleHeight / rect.height;
 
-      console.log(`[TikTok] Vidéo: visibility=${(visibilityRatio * 100).toFixed(1)}%, paused=${video.paused}, time=${video.currentTime.toFixed(2)}s`);
-
-      // Prendre la vidéo la plus visible (ratio le plus élevé)
-      // Bonus: si elle est en lecture, on privilégie légèrement
-      const score = visibilityRatio + (video.paused ? 0 : 0.1);
-
-      if (score > bestVisibilityRatio) {
-        bestVisibilityRatio = score;
+      if (visibilityRatio > bestVisibilityRatio) {
+        bestVisibilityRatio = visibilityRatio;
         bestVideo = video;
       }
     }
 
     if (bestVideo) {
-      console.log(`[TikTok] ✅ Vidéo sélectionnée avec ${(bestVisibilityRatio * 100).toFixed(1)}% de visibilité`);
+      console.log(`[TikTok] Fallback visibility: ${(bestVisibilityRatio * 100).toFixed(1)}%`);
       return bestVideo;
     }
 
-    // Fallback: première vidéo avec dimensions
-    for (const video of videos) {
-      if (video.videoWidth > 0) {
-        console.log('[TikTok] Fallback: première vidéo avec dimensions');
-        return video;
-      }
-    }
-
+    // Dernier fallback
     return videos[0];
   }
 
