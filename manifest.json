@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Vertical To Horizontal",
-  "version": "4.0.0",
+  "version": "9.1.0",
   "description": "Transforme les vidéos verticales (TikTok, YouTube Shorts) en format horizontal avec Picture-in-Picture",
   "permissions": [
     "activeTab",
