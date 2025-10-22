@@ -76,4 +76,4 @@ L'extension utilise un canvas HTML5 pour capturer chaque frame de la vidéo, app
 
 ## 📝 Version
 
-**3.3.0** - Raccourcis clavier adaptés pour Mac (Cmd+Shift) et Windows (Ctrl+Shift)
+**4.0.0** - Code nettoyé et optimisé, détection vidéo TikTok améliorée
