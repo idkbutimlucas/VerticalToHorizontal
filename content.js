@@ -50,9 +50,63 @@ function getVideo() {
     return document.querySelector('ytd-reel-video-renderer[is-active] video') ||
            document.querySelector('video');
   }
+
   if (window.location.hostname.includes('tiktok.com')) {
-    return document.querySelector('video');
+    // Nouvelle approche: trouver la vidéo avec le plus grand ratio de visibilité dans le viewport
+    const videos = document.querySelectorAll('video');
+    console.log(`[TikTok] ${videos.length} vidéos trouvées`);
+
+    if (videos.length === 0) return null;
+
+    // Calculer le ratio de visibilité pour chaque vidéo
+    let bestVideo = null;
+    let bestVisibilityRatio = 0;
+
+    for (const video of videos) {
+      // Ignorer les vidéos sans dimensions
+      if (video.videoWidth === 0 || video.videoHeight === 0) continue;
+
+      const rect = video.getBoundingClientRect();
+
+      // Ignorer les vidéos complètement hors viewport
+      if (rect.bottom < 0 || rect.top > window.innerHeight) continue;
+
+      // Calculer la hauteur visible de la vidéo dans le viewport
+      const visibleTop = Math.max(0, rect.top);
+      const visibleBottom = Math.min(window.innerHeight, rect.bottom);
+      const visibleHeight = Math.max(0, visibleBottom - visibleTop);
+
+      // Calculer le ratio de visibilité (0 à 1)
+      const visibilityRatio = visibleHeight / rect.height;
+
+      console.log(`[TikTok] Vidéo: visibility=${(visibilityRatio * 100).toFixed(1)}%, paused=${video.paused}, time=${video.currentTime.toFixed(2)}s`);
+
+      // Prendre la vidéo la plus visible (ratio le plus élevé)
+      // Bonus: si elle est en lecture, on privilégie légèrement
+      const score = visibilityRatio + (video.paused ? 0 : 0.1);
+
+      if (score > bestVisibilityRatio) {
+        bestVisibilityRatio = score;
+        bestVideo = video;
+      }
+    }
+
+    if (bestVideo) {
+      console.log(`[TikTok] ✅ Vidéo sélectionnée avec ${(bestVisibilityRatio * 100).toFixed(1)}% de visibilité`);
+      return bestVideo;
+    }
+
+    // Fallback: première vidéo avec dimensions
+    for (const video of videos) {
+      if (video.videoWidth > 0) {
+        console.log('[TikTok] Fallback: première vidéo avec dimensions');
+        return video;
+      }
+    }
+
+    return videos[0];
   }
+
   return null;
 }
 
