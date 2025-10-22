@@ -9,7 +9,11 @@ let sourceVideo = null;
 let animating = false;
 let originalVideoStyle = null;
 
-console.log('V2H chargée');
+console.log('========================================');
+console.log('🚀 V2H Extension chargée !');
+console.log('   URL:', window.location.href);
+console.log('   Hostname:', window.location.hostname);
+console.log('========================================');
 
 // Configurer les contrôles Media Session
 function setupMediaControls(video, pipVid = null) {
@@ -273,10 +277,25 @@ function cleanup() {
 
 // Activer PiP
 async function startPiP() {
-  if (pipActive) return false;
+  console.log('🎬 startPiP() appelée');
+  console.log('   pipActive:', pipActive);
 
+  if (pipActive) {
+    console.log('⚠️ PiP déjà actif, annulation');
+    return false;
+  }
+
+  console.log('🔍 Appel de getVideo()...');
   const video = getVideo();
-  if (!video || !video.videoWidth) return false;
+
+  console.log('📹 Résultat getVideo():', video);
+  console.log('   videoWidth:', video?.videoWidth);
+  console.log('   videoHeight:', video?.videoHeight);
+
+  if (!video || !video.videoWidth) {
+    console.log('❌ Pas de vidéo valide trouvée');
+    return false;
+  }
 
   const w = video.videoWidth;
   const h = video.videoHeight;
@@ -409,8 +428,16 @@ document.addEventListener('keydown', async (e) => {
   if (modifierKey && e.shiftKey && key === 'p') {
     e.preventDefault();
     e.stopPropagation();
-    console.log('Raccourci PiP activé');
-    pipActive ? await stopPiP() : await startPiP();
+    console.log('⌨️ Raccourci PiP activé');
+    console.log('   pipActive avant:', pipActive);
+
+    if (pipActive) {
+      console.log('→ Arrêt du PiP...');
+      await stopPiP();
+    } else {
+      console.log('→ Démarrage du PiP...');
+      await startPiP();
+    }
     return;
   }
 
