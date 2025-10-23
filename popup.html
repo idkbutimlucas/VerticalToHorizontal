@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vertical To Horizontal</title>
+  <title>Universal Video PiP</title>
   <style>
     * {
       margin: 0;
@@ -89,22 +89,48 @@
       border-radius: 4px;
       font-family: monospace;
     }
+
+    .settings-link {
+      text-align: center;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid rgba(114, 47, 55, 0.2);
+    }
+
+    .settings-link a {
+      color: #722F37;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: opacity 0.3s;
+    }
+
+    .settings-link a:hover {
+      opacity: 0.7;
+    }
   </style>
 </head>
 <body>
-  <h1>↔️ Vertical To Horizontal</h1>
+  <h1>📺 Universal Video PiP</h1>
 
   <div id="status" class="status">
-    <span id="statusText">Prêt</span>
+    <span id="statusText">Ready</span>
   </div>
 
-  <button id="pipBtn">Activer PiP</button>
-  <button id="orientationBtn">Activer Rotation</button>
+  <button id="pipBtn">Enable PiP</button>
+  <button id="orientationBtn" style="display: none;">Enable Rotation</button>
 
   <div class="shortcuts">
-    <strong>Raccourcis:</strong>
-    <span class="shortcut">⌘⇧P / Ctrl⇧P</span> PiP<br>
-    <span class="shortcut">⌘⇧R / Ctrl⇧R</span> Rotation
+    <strong>Shortcuts:</strong>
+    <span class="shortcut" id="pipShortcutDisplay">⌘⇧P / Ctrl⇧P</span> Toggle PiP<br>
+    <span class="shortcut" id="rotationShortcutDisplay">⌘⇧R / Ctrl⇧R</span> Toggle Rotation (real-time)
+  </div>
+
+  <div class="settings-link">
+    <a href="#" id="settingsLink">⚙️ Customize shortcuts</a>
   </div>
 
   <script src="popup.js"></script>

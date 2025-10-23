@@ -4,53 +4,84 @@ const orientationBtn = document.getElementById('orientationBtn');
 const pipBtn = document.getElementById('pipBtn');
 const statusText = document.getElementById('statusText');
 const statusDiv = document.getElementById('status');
+const settingsLink = document.getElementById('settingsLink');
+const pipShortcutDisplay = document.getElementById('pipShortcutDisplay');
+const rotationShortcutDisplay = document.getElementById('rotationShortcutDisplay');
 
 let currentTab = null;
 let isHorizontal = false;
 let pipActive = false;
+let isVerticalVideo = false;
+let shortcuts = null;
 
-// Mettre à jour l'interface
+// Update UI
 function updateUI() {
-  if (isHorizontal) {
-    orientationBtn.textContent = 'Désactiver Rotation';
-    orientationBtn.style.background = '#722F37';
-    orientationBtn.style.color = '#EFDFBB';
+  // Show rotation button only for vertical videos
+  if (isVerticalVideo) {
+    orientationBtn.style.display = 'block';
+
+    // Update rotation button
+    if (isHorizontal) {
+      orientationBtn.textContent = '↔️ Rotation Enabled';
+      orientationBtn.style.background = '#722F37';
+      orientationBtn.style.color = '#EFDFBB';
+    } else {
+      orientationBtn.textContent = '🔄 Enable Rotation';
+      orientationBtn.style.background = 'white';
+      orientationBtn.style.color = '#722F37';
+    }
   } else {
-    orientationBtn.textContent = 'Activer Rotation';
-    orientationBtn.style.background = 'white';
-    orientationBtn.style.color = '#722F37';
+    // Hide button for horizontal videos
+    orientationBtn.style.display = 'none';
   }
 
+  // Update PiP button and status
   if (pipActive) {
-    pipBtn.textContent = 'Désactiver PiP';
-    statusText.textContent = '✅ PiP actif';
+    pipBtn.textContent = 'Disable PiP';
+    if (isVerticalVideo && isHorizontal) {
+      statusText.textContent = '✅ PiP active (Rotation Mode)';
+    } else {
+      statusText.textContent = '✅ PiP active';
+    }
     statusDiv.className = 'status active';
   } else {
-    pipBtn.textContent = 'Activer PiP';
-    statusText.textContent = isHorizontal ? 'Mode: Horizontal' : 'Mode: Vertical';
+    pipBtn.textContent = 'Enable PiP';
+
+    if (isVerticalVideo) {
+      if (isHorizontal) {
+        statusText.textContent = '📱 Vertical video • Rotation ready';
+      } else {
+        statusText.textContent = '📱 Vertical video detected';
+      }
+    } else {
+      statusText.textContent = '🎬 Universal PiP ready';
+    }
     statusDiv.className = 'status';
   }
 }
 
-// Vérifier le statut
+// Check status
 async function checkStatus() {
   try {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     currentTab = tab;
 
-    if (!tab.url || (!tab.url.includes('youtube.com') && !tab.url.includes('tiktok.com'))) {
-      statusText.textContent = 'Page non supportée';
+    // Check if URL is valid (not chrome://, about:, etc.)
+    if (!tab.url || tab.url.startsWith('chrome://') || tab.url.startsWith('about:') || tab.url.startsWith('chrome-extension://')) {
+      statusText.textContent = '⚠️ System page not supported';
       orientationBtn.disabled = true;
       pipBtn.disabled = true;
       return;
     }
 
+    // Enable all buttons by default
     orientationBtn.disabled = false;
     pipBtn.disabled = false;
 
+    // Get status from content script
     chrome.tabs.sendMessage(tab.id, { action: 'getPiPStatus' }, (response) => {
       if (chrome.runtime.lastError) {
-        statusText.textContent = '⚠️ Rechargez la page (F5)';
+        statusText.textContent = '⚠️ Reload page (F5)';
         orientationBtn.disabled = true;
         pipBtn.disabled = true;
         return;
@@ -59,16 +90,17 @@ async function checkStatus() {
       if (response) {
         isHorizontal = response.isHorizontal || false;
         pipActive = response.active || false;
+        isVerticalVideo = response.isVerticalVideo || false;
         updateUI();
       }
     });
 
   } catch (error) {
-    console.error('Erreur:', error);
+    console.error('Error:', error);
   }
 }
 
-// Bouton rotation
+// Rotation button
 orientationBtn.addEventListener('click', async () => {
   if (!currentTab) return;
 
@@ -83,7 +115,7 @@ orientationBtn.addEventListener('click', async () => {
   });
 });
 
-// Bouton PiP
+// PiP button
 pipBtn.addEventListener('click', async () => {
   if (!currentTab) return;
 
@@ -98,6 +130,50 @@ pipBtn.addEventListener('click', async () => {
   });
 });
 
-// Vérifier au chargement
+// Load and display shortcuts
+async function loadShortcuts() {
+  try {
+    const result = await chrome.storage.sync.get(['shortcuts']);
+    shortcuts = result.shortcuts || {
+      pip: { ctrl: true, shift: true, alt: false, key: 'p' },
+      rotation: { ctrl: true, shift: true, alt: false, key: 'r' }
+    };
+    updateShortcutDisplay();
+  } catch (error) {
+    console.error('Error loading shortcuts:', error);
+  }
+}
+
+// Display shortcuts in interface
+function updateShortcutDisplay() {
+  if (!shortcuts) return;
+
+  const isMac = navigator.userAgentData?.platform === 'macOS' || navigator.platform.toUpperCase().includes('MAC');
+
+  // PiP shortcut
+  const pipParts = [];
+  if (shortcuts.pip.ctrl) pipParts.push(isMac ? '⌘' : 'Ctrl');
+  if (shortcuts.pip.shift) pipParts.push(isMac ? '⇧' : 'Shift');
+  if (shortcuts.pip.alt) pipParts.push(isMac ? '⌥' : 'Alt');
+  pipParts.push(shortcuts.pip.key.toUpperCase());
+  pipShortcutDisplay.textContent = pipParts.join(isMac ? '' : '+');
+
+  // Rotation shortcut
+  const rotationParts = [];
+  if (shortcuts.rotation.ctrl) rotationParts.push(isMac ? '⌘' : 'Ctrl');
+  if (shortcuts.rotation.shift) rotationParts.push(isMac ? '⇧' : 'Shift');
+  if (shortcuts.rotation.alt) rotationParts.push(isMac ? '⌥' : 'Alt');
+  rotationParts.push(shortcuts.rotation.key.toUpperCase());
+  rotationShortcutDisplay.textContent = rotationParts.join(isMac ? '' : '+');
+}
+
+// Open settings page
+settingsLink.addEventListener('click', (e) => {
+  e.preventDefault();
+  chrome.runtime.openOptionsPage();
+});
+
+// Check on load
+loadShortcuts();
 checkStatus();
 setInterval(checkStatus, 2000);

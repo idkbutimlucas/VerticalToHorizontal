@@ -1,15 +1,14 @@
 {
   "manifest_version": 3,
-  "name": "Vertical To Horizontal",
-  "version": "9.1.0",
-  "description": "Transforme les vidéos verticales (TikTok, YouTube Shorts) en format horizontal avec Picture-in-Picture",
+  "name": "Universal Video PiP",
+  "version": "10.0.0",
+  "description": "Universal Picture-in-Picture for all web videos with optional rotation for vertical videos",
   "permissions": [
     "activeTab",
     "storage"
   ],
   "host_permissions": [
-    "https://www.tiktok.com/*",
-    "https://www.youtube.com/*"
+    "<all_urls>"
   ],
   "action": {
     "default_popup": "popup.html",
@@ -19,11 +18,13 @@
       "128": "icons/icon128.png"
     }
   },
+  "options_page": "options.html",
   "content_scripts": [
     {
-      "matches": ["https://www.tiktok.com/*", "https://www.youtube.com/*"],
+      "matches": ["<all_urls>"],
       "js": ["content.js"],
-      "run_at": "document_end"
+      "run_at": "document_end",
+      "all_frames": false
     }
   ],
   "icons": {
