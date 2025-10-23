@@ -14,7 +14,7 @@ let shortcuts = {
   rotation: { ctrl: true, shift: true, alt: false, key: 'r' }
 };
 
-console.log('[Universal PiP] Extension loaded v10.0');
+console.log('[Universal PiP] Extension loaded v1.0.0');
 
 // Load custom shortcuts
 async function loadShortcuts() {

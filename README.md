@@ -4,7 +4,7 @@
 
 Transform any web video into a floating Picture-in-Picture window. Automatically detects vertical videos (TikTok, YouTube Shorts) and offers real-time rotation to horizontal format.
 
-[![Version](https://img.shields.io/badge/version-10.0.0-blue.svg)](https://github.com/idkbutimlucas/VerticalToHorizontal)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/idkbutimlucas/VerticalToHorizontal)
 [![Chrome](https://img.shields.io/badge/chrome-extension-green.svg)](https://github.com/idkbutimlucas/VerticalToHorizontal)
 [![License](https://img.shields.io/badge/license-MIT-orange.svg)](LICENSE)
 
@@ -237,7 +237,7 @@ cd VerticalToHorizontal
 
 ## 📝 Changelog
 
-### v10.0.0 - Complete Rewrite (Current)
+### v1.0.0 - Initial Public Release (Current)
 - ✨ Universal video PiP for all websites
 - ✨ Customizable keyboard shortcuts
 - ✨ Real-time rotation toggle
@@ -248,13 +248,6 @@ cd VerticalToHorizontal
 - ✨ Settings page with sync
 - 🔧 Platform-specific optimizations
 - 🎨 Modern, clean UI
-
-### v9.1.0
-- 🔧 Optimized PiP window size
-
-### v4.0.0
-- 🔧 Code refactoring
-- 🐛 Improved TikTok video detection
 
 ## 👨‍💻 Author
 
