@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy - Universal Video PiP</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #EFDFBB 0%, #f5ecd7 100%);
+      color: #333;
+      padding: 40px 20px;
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      padding: 50px;
+      box-shadow: 0 10px 40px rgba(114, 47, 55, 0.15);
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 50px;
+      padding-bottom: 30px;
+      border-bottom: 3px solid #722F37;
+    }
+
+    h1 {
+      font-size: 42px;
+      color: #722F37;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .version {
+      background: #722F37;
+      color: #EFDFBB;
+      padding: 6px 15px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .last-updated {
+      color: #666;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+
+    h2 {
+      font-size: 28px;
+      color: #722F37;
+      margin-top: 45px;
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #EFDFBB;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    h3 {
+      font-size: 22px;
+      color: #555;
+      margin-top: 30px;
+      margin-bottom: 15px;
+    }
+
+    p {
+      margin-bottom: 18px;
+      color: #444;
+      font-size: 16px;
+    }
+
+    ul, ol {
+      margin-left: 25px;
+      margin-bottom: 20px;
+    }
+
+    li {
+      margin-bottom: 12px;
+      color: #444;
+      font-size: 16px;
+    }
+
+    .highlight-box {
+      background: linear-gradient(135deg, #722F37 0%, #8B3A43 100%);
+      color: #EFDFBB;
+      padding: 35px;
+      border-radius: 16px;
+      margin: 35px 0;
+      box-shadow: 0 8px 25px rgba(114, 47, 55, 0.25);
+    }
+
+    .highlight-box h2 {
+      color: #EFDFBB;
+      border-bottom: 2px solid #EFDFBB;
+      margin-top: 0;
+    }
+
+    .highlight-box p,
+    .highlight-box li {
+      color: #EFDFBB;
+      font-size: 17px;
+    }
+
+    .highlight-box ul {
+      margin-top: 15px;
+    }
+
+    .info-box {
+      background: #f0f8ff;
+      border-left: 5px solid #722F37;
+      padding: 25px;
+      margin: 25px 0;
+      border-radius: 8px;
+    }
+
+    .success-box {
+      background: #d4edda;
+      border-left: 5px solid #28a745;
+      padding: 25px;
+      margin: 25px 0;
+      border-radius: 8px;
+    }
+
+    .warning-box {
+      background: #fff3cd;
+      border-left: 5px solid #ffc107;
+      padding: 25px;
+      margin: 25px 0;
+      border-radius: 8px;
+    }
+
+    .checkmark {
+      color: #28a745;
+      font-weight: bold;
+      font-size: 20px;
+    }
+
+    .cross {
+      color: #dc3545;
+      font-weight: bold;
+      font-size: 20px;
+    }
+
+    code {
+      background: #f4f4f4;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      font-size: 15px;
+      color: #722F37;
+      font-weight: 600;
+    }
+
+    a {
+      color: #722F37;
+      text-decoration: none;
+      font-weight: 600;
+      border-bottom: 2px solid #722F37;
+      transition: all 0.3s;
+    }
+
+    a:hover {
+      background: #EFDFBB;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    footer {
+      margin-top: 60px;
+      padding-top: 40px;
+      border-top: 2px solid #eee;
+      text-align: center;
+      color: #666;
+    }
+
+    .back-link {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: #722F37;
+      color: #EFDFBB;
+      padding: 12px 20px;
+      border-radius: 10px;
+      text-decoration: none;
+      border: none;
+      font-weight: 600;
+      box-shadow: 0 4px 15px rgba(114, 47, 55, 0.3);
+      transition: all 0.3s;
+    }
+
+    .back-link:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(114, 47, 55, 0.4);
+      background: #5a2529;
+      padding: 12px 20px;
+      border-radius: 10px;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 30px 20px;
+      }
+
+      h1 {
+        font-size: 32px;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      h2 {
+        font-size: 24px;
+      }
+
+      .back-link {
+        position: static;
+        display: inline-block;
+        margin-bottom: 20px;
+      }
+    }
+
+    strong {
+      color: #722F37;
+    }
+
+    .section {
+      margin-bottom: 40px;
+    }
+  </style>
+</head>
+<body>
+  <a href="options.html" class="back-link">← Back to Settings</a>
+
+  <div class="container">
+    <header>
+      <h1>
+        🔒 Privacy Policy
+        <span class="version">v1.0.0</span>
+      </h1>
+      <p class="last-updated">Last Updated: October 25, 2025</p>
+    </header>
+
+    <div class="highlight-box">
+      <h2>📋 Summary - What You Need to Know</h2>
+      <ul>
+        <li><span class="checkmark">✅</span> We only store your keyboard shortcut preferences locally</li>
+        <li><span class="checkmark">✅</span> No personal data is collected</li>
+        <li><span class="checkmark">✅</span> No data is sent to external servers</li>
+        <li><span class="checkmark">✅</span> No tracking, analytics, or cookies</li>
+        <li><span class="checkmark">✅</span> You can delete everything by uninstalling the extension</li>
+      </ul>
+    </div>
+
+    <section class="section">
+      <h2>📊 Data Collection</h2>
+
+      <h3>What Data We Collect</h3>
+      <div class="success-box">
+        <p><strong>Keyboard Shortcut Preferences Only</strong></p>
+        <ul>
+          <li>Custom keyboard shortcuts you configure for PiP activation and rotation</li>
+          <li>Stored locally on your device using Chrome's storage API</li>
+          <li>Synced across your devices if you're signed into Chrome (via Chrome's built-in sync)</li>
+        </ul>
+      </div>
+
+      <h3>What Data We DO NOT Collect</h3>
+      <div class="info-box">
+        <ul>
+          <li><span class="cross">❌</span> Personal information (name, email, address, phone, etc.)</li>
+          <li><span class="cross">❌</span> Browsing history or website data</li>
+          <li><span class="cross">❌</span> Video content, metadata, or viewing habits</li>
+          <li><span class="cross">❌</span> Analytics, usage statistics, or telemetry</li>
+          <li><span class="cross">❌</span> Cookies or tracking data</li>
+          <li><span class="cross">❌</span> IP addresses or device information</li>
+          <li><span class="cross">❌</span> Any data sent to external servers</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>🎯 How We Use Your Data</h2>
+      <p>The keyboard shortcut preferences are used <strong>solely</strong> to:</p>
+      <ul>
+        <li>Customize your Picture-in-Picture activation shortcuts</li>
+        <li>Provide a personalized user experience</li>
+        <li>Sync your preferences across devices (only if Chrome sync is enabled)</li>
+      </ul>
+
+      <div class="warning-box">
+        <p><strong>⚠️ Important:</strong> Your data <strong>never leaves your browser</strong> and is <strong>never transmitted to any external server</strong>. The only sync mechanism is Chrome's built-in sync, which is managed entirely by Google.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>🔐 Data Storage & Security</h2>
+      <ul>
+        <li>All data is stored locally in your browser using Chrome's <code>chrome.storage.sync</code> API</li>
+        <li>Data is encrypted by Chrome's built-in sync mechanism (if sync is enabled)</li>
+        <li>No external servers, databases, or third-party services are used</li>
+        <li>You can clear all stored data by uninstalling the extension or resetting to defaults</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>🔑 Permissions Explained</h2>
+      <p>This extension requires the following permissions. Here's exactly why:</p>
+
+      <div class="info-box">
+        <h3>1. <code>activeTab</code></h3>
+        <p><strong>Purpose:</strong> To detect and access video elements on the current active tab</p>
+        <p><strong>Usage:</strong> Only when you manually activate Picture-in-Picture mode</p>
+        <p><strong>Data Access:</strong> Limited to the active tab, only when you use the extension</p>
+        <p><strong>Data Collection:</strong> None - we only detect video elements, not collect data</p>
+      </div>
+
+      <div class="info-box">
+        <h3>2. <code>storage</code></h3>
+        <p><strong>Purpose:</strong> To save your custom keyboard shortcut preferences</p>
+        <p><strong>Usage:</strong> To store and retrieve your settings locally</p>
+        <p><strong>Data Stored:</strong> Only keyboard shortcut configurations (modifier keys + letter)</p>
+        <p><strong>Location:</strong> Stored locally on your device</p>
+      </div>
+
+      <div class="info-box">
+        <h3>3. <code>host_permissions: &lt;all_urls&gt;</code></h3>
+        <p><strong>Purpose:</strong> To enable Picture-in-Picture on any website with video content</p>
+        <p><strong>Usage:</strong> To inject the content script that detects video elements</p>
+        <p><strong>Data Access:</strong> Limited to video element detection only</p>
+        <p><strong>Data Collection:</strong> None - no data is collected or transmitted from visited websites</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>✅ User Consent</h2>
+      <p>By installing and using this extension, you consent to:</p>
+      <ul>
+        <li>Local storage of your keyboard shortcut preferences on your device</li>
+        <li>The extension accessing video elements on web pages you visit (only when you activate PiP)</li>
+        <li>Chrome syncing your preferences across devices (if Chrome sync is enabled)</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>👤 Your Rights & Choices</h2>
+      <p>You have complete control over your data:</p>
+
+      <div class="success-box">
+        <ul>
+          <li><strong>View your data:</strong> Access your stored shortcuts in the extension's settings page</li>
+          <li><strong>Modify your data:</strong> Change your keyboard shortcuts at any time in settings</li>
+          <li><strong>Delete your data:</strong> Uninstall the extension to remove all stored data instantly</li>
+          <li><strong>Reset to defaults:</strong> Click "Reset" in settings to restore default shortcuts</li>
+          <li><strong>Opt-out of sync:</strong> Disable Chrome sync to keep data only on your current device</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>🗑️ How to Delete Your Data</h2>
+
+      <h3>Option 1: Uninstall the Extension (Complete Removal)</h3>
+      <ol>
+        <li>Go to <code>chrome://extensions/</code></li>
+        <li>Find "Universal Video PiP"</li>
+        <li>Click "Remove"</li>
+        <li>✅ All data is permanently deleted</li>
+      </ol>
+
+      <h3>Option 2: Reset to Default Settings</h3>
+      <ol>
+        <li>Click the extension icon</li>
+        <li>Click "⚙️ Customize shortcuts"</li>
+        <li>Click "🔄 Reset" button</li>
+        <li>✅ Settings are restored to defaults</li>
+      </ol>
+    </section>
+
+    <section class="section">
+      <h2>🚫 Third-Party Services</h2>
+      <div class="info-box">
+        <p><strong>This extension does NOT use:</strong></p>
+        <ul>
+          <li>Analytics services (Google Analytics, etc.)</li>
+          <li>Tracking tools or pixels</li>
+          <li>External APIs or servers</li>
+          <li>Third-party libraries for data collection</li>
+          <li>Advertising networks</li>
+          <li>Any external services whatsoever</li>
+        </ul>
+        <p><strong>Your data stays 100% local.</strong></p>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>👶 Children's Privacy</h2>
+      <p>This extension does not knowingly collect any information from children under 13 years of age. The extension is designed for general audiences and does not target children.</p>
+    </section>
+
+    <section class="section">
+      <h2>📝 Changes to This Privacy Policy</h2>
+      <p>We may update this Privacy Policy from time to time. Any changes will be:</p>
+      <ul>
+        <li>Posted on this page with an updated "Last Updated" date</li>
+        <li>Communicated through the extension's Chrome Web Store listing</li>
+        <li>Announced in the extension release notes</li>
+      </ul>
+      <p><strong>We will never introduce data collection without your explicit consent.</strong></p>
+    </section>
+
+    <section class="section">
+      <h2>✓ Compliance</h2>
+      <p>This extension complies with:</p>
+      <ul>
+        <li>Chrome Web Store Developer Program Policies</li>
+        <li>User Data Privacy requirements</li>
+        <li>Limited Use of User Data policy</li>
+        <li>GDPR principles (data minimization, transparency, user rights)</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>📞 Contact & Support</h2>
+      <p>If you have questions about this Privacy Policy or the extension's data practices:</p>
+      <ul>
+        <li><strong>Developer:</strong> Lucas Hochart</li>
+        <li><strong>Website:</strong> <a href="https://lucashochart.fr" target="_blank">https://lucashochart.fr</a></li>
+        <li><strong>GitHub:</strong> <a href="https://github.com/idkbutimlucas/VerticalToHorizontal" target="_blank">VerticalToHorizontal Repository</a></li>
+        <li><strong>Issues:</strong> <a href="https://github.com/idkbutimlucas/VerticalToHorizontal/issues" target="_blank">Report on GitHub</a></li>
+      </ul>
+    </section>
+
+    <footer>
+      <p style="font-size: 18px; margin-bottom: 15px;"><strong>Universal Video PiP</strong> - Privacy-First Extension</p>
+      <p>Developed with ❤️ by <a href="https://lucashochart.fr" target="_blank">Lucas Hochart</a></p>
+      <p style="margin-top: 20px; font-size: 14px;">© 2025 - All Rights Reserved</p>
+    </footer>
+  </div>
+</body>
+</html>
