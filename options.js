@@ -12,7 +12,7 @@ const DEFAULT_SHORTCUTS = {
     ctrl: true,
     shift: true,
     alt: false,
-    key: 'r'
+    key: 'e'
   }
 };
 
@@ -49,7 +49,6 @@ async function loadSettings() {
     rotationAlt.checked = shortcuts.rotation.alt;
     rotationKey.value = shortcuts.rotation.key.toUpperCase();
   } catch (error) {
-    console.error('Error loading settings:', error);
     showMessage('Error loading settings', 'error');
   }
 }
@@ -101,7 +100,6 @@ async function saveSettings() {
       }
     }
   } catch (error) {
-    console.error('Error saving settings:', error);
     showMessage('❌ Error saving settings', 'error');
   }
 }
@@ -123,7 +121,6 @@ async function resetSettings() {
       }
     }
   } catch (error) {
-    console.error('Error resetting settings:', error);
     showMessage('❌ Error resetting settings', 'error');
   }
 }

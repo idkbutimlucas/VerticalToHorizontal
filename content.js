@@ -11,10 +11,8 @@ let originalStyle = null;
 // Raccourcis clavier (chargés depuis le storage)
 let shortcuts = {
   pip: { ctrl: true, shift: true, alt: false, key: 'p' },
-  rotation: { ctrl: true, shift: true, alt: false, key: 'r' }
+  rotation: { ctrl: true, shift: true, alt: false, key: 'e' }
 };
-
-console.log('[Universal PiP] Extension loaded v1.0.0');
 
 // Load custom shortcuts
 async function loadShortcuts() {
@@ -22,10 +20,9 @@ async function loadShortcuts() {
     const result = await chrome.storage.sync.get(['shortcuts']);
     if (result.shortcuts) {
       shortcuts = result.shortcuts;
-      console.log('[Universal PiP] Shortcuts loaded:', shortcuts);
     }
   } catch (error) {
-    console.error('[Universal PiP] Error loading shortcuts:', error);
+    // Silently handle error
   }
 }
 
@@ -222,24 +219,13 @@ async function startPiP() {
       await video.requestPictureInPicture();
       setupMediaControls(video);
       pipActive = true;
-      console.log('[Universal PiP] Classic mode enabled', {
-        dimensions: `${video.videoWidth}x${video.videoHeight}`,
-        isVertical: isVerticalVideo
-      });
       return true;
     } catch(e) {
-      console.error('[Universal PiP] Classic PiP error:', e);
       return false;
     }
   }
 
   // Canvas/stream mode: for TikTok, YouTube Shorts, or rotation
-  console.log('[Universal PiP] Canvas mode enabled', {
-    platform: isTikTok ? 'TikTok' : isYouTubeShorts ? 'YouTube Shorts' : 'Other',
-    rotation: isHorizontal,
-    isVertical: isVerticalVideo
-  });
-
   hideSourceVideo(video);
 
   if (!canvas) {
@@ -263,7 +249,6 @@ async function startPiP() {
   try {
     await pipVideo.requestPictureInPicture();
   } catch(e){
-    console.error('[Universal PiP] Canvas PiP error:', e);
     cleanup();
     return false;
   }
@@ -276,7 +261,6 @@ async function startPiP() {
   }
 
   pipActive = true;
-  console.log('[Universal PiP] Canvas PiP enabled');
   return true;
 }
 
@@ -286,11 +270,9 @@ async function stopPiP() { cleanup(); return true; }
 // === TOGGLE ORIENTATION ===
 async function toggleOrientation() {
   isHorizontal = !isHorizontal;
-  console.log('[Universal PiP] Rotation:', isHorizontal ? 'Enabled' : 'Disabled');
 
   // If PiP is active, restart it with new mode
   if (pipActive) {
-    console.log('[Universal PiP] Restarting PiP with new mode...');
     await stopPiP();
     // Small delay to ensure previous PiP is closed
     await new Promise(resolve => setTimeout(resolve, 100));
@@ -308,13 +290,10 @@ function observeFeed() {
 
   if (!isTikTok && !isYouTubeShorts) return;
 
-  console.log('[Universal PiP] Feed observation enabled');
-
   // Observe videos that become visible
   const observer = new IntersectionObserver(entries=>{
     entries.forEach(entry=>{
       if (entry.isIntersecting && entry.target !== sourceVideo && entry.target.readyState >= 2) {
-        console.log('[Universal PiP] Video change detected');
         sourceVideo = entry.target;
       }
     });

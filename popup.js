@@ -96,7 +96,7 @@ async function checkStatus() {
     });
 
   } catch (error) {
-    console.error('Error:', error);
+    // Silently handle error
   }
 }
 
@@ -136,11 +136,11 @@ async function loadShortcuts() {
     const result = await chrome.storage.sync.get(['shortcuts']);
     shortcuts = result.shortcuts || {
       pip: { ctrl: true, shift: true, alt: false, key: 'p' },
-      rotation: { ctrl: true, shift: true, alt: false, key: 'r' }
+      rotation: { ctrl: true, shift: true, alt: false, key: 'e' }
     };
     updateShortcutDisplay();
   } catch (error) {
-    console.error('Error loading shortcuts:', error);
+    // Silently handle error
   }
 }
 
