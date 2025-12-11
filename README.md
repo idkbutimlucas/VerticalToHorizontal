@@ -1,10 +1,10 @@
-# 📺 Universal Video PiP
+# 📺 Picture-in-Picture Plus - Rotate Vertical Shorts
 
 **Universal Picture-in-Picture extension for Chrome with automatic vertical video detection and optional rotation.**
 
 Transform any web video into a floating Picture-in-Picture window. Automatically detects vertical videos (TikTok, YouTube Shorts) and offers real-time rotation to horizontal format.
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/idkbutimlucas/VerticalToHorizontal)
+[![Version](https://img.shields.io/badge/version-1.0.2-blue.svg)](https://github.com/idkbutimlucas/VerticalToHorizontal)
 [![Chrome](https://img.shields.io/badge/chrome-extension-green.svg)](https://github.com/idkbutimlucas/VerticalToHorizontal)
 [![License](https://img.shields.io/badge/license-MIT-orange.svg)](LICENSE)
 
