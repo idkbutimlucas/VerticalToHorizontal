@@ -8,6 +8,476 @@ let sourceVideo = null;
 let animating = false;
 let originalStyle = null;
 
+// === PIP OVERLAY BUTTON ===
+const PIP_BUTTON_CLASS = 'pip-plus-overlay-btn';
+const PIP_BUTTON_YT_CLASS = 'pip-plus-yt-btn';
+const PIP_CONTAINER_CLASS = 'pip-plus-container';
+
+// Inject styles once
+function injectOverlayStyles() {
+  if (document.getElementById('pip-plus-styles')) return;
+
+  const style = document.createElement('style');
+  style.id = 'pip-plus-styles';
+  style.textContent = `
+    /* Generic overlay button for non-YouTube sites */
+    .${PIP_BUTTON_CLASS} {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      width: 36px;
+      height: 36px;
+      background: rgba(0, 0, 0, 0.6);
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.2s, background 0.2s;
+      z-index: 2147483647;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px;
+    }
+    .${PIP_BUTTON_CLASS}:hover {
+      background: rgba(0, 0, 0, 0.8);
+    }
+    .${PIP_BUTTON_CLASS}.active {
+      background: rgba(114, 47, 55, 0.9);
+    }
+    .${PIP_BUTTON_CLASS}.active:hover {
+      background: rgba(114, 47, 55, 1);
+    }
+    .${PIP_BUTTON_CLASS} svg {
+      width: 100%;
+      height: 100%;
+      fill: white;
+    }
+    .${PIP_CONTAINER_CLASS}:hover .${PIP_BUTTON_CLASS},
+    .${PIP_BUTTON_CLASS}.visible {
+      opacity: 1;
+    }
+
+    /* YouTube native-style button (classic player) */
+    .${PIP_BUTTON_YT_CLASS} {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      width: 48px;
+      height: 48px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.9;
+      transition: opacity 0.1s;
+    }
+    .${PIP_BUTTON_YT_CLASS}:hover {
+      opacity: 1;
+    }
+    .${PIP_BUTTON_YT_CLASS}.active svg {
+      fill: #f00;
+    }
+    .${PIP_BUTTON_YT_CLASS} svg {
+      width: 24px;
+      height: 24px;
+      fill: white;
+    }
+
+    /* YouTube Shorts action button style - matches native buttons */
+    .pip-plus-shorts-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      padding: 0;
+      margin: 16px 0 0 0;
+      color: white;
+      font-size: 12px;
+      font-family: 'Roboto', 'Arial', sans-serif;
+      height: 72px;
+      width: 64px;
+    }
+    .pip-plus-shorts-btn:hover {
+      opacity: 0.8;
+    }
+    .pip-plus-shorts-btn.active svg {
+      fill: #f00;
+    }
+    .pip-plus-shorts-btn svg {
+      width: 24px;
+      height: 24px;
+      fill: white;
+    }
+    .pip-plus-shorts-btn .pip-plus-icon-circle {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 4px;
+    }
+    .pip-plus-shorts-btn:hover .pip-plus-icon-circle {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    .pip-plus-shorts-btn.active .pip-plus-icon-circle {
+      background: rgba(255, 0, 0, 0.2);
+    }
+    .pip-plus-shorts-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+  `;
+  document.head.appendChild(style);
+}
+
+// PiP icon SVG
+const PIP_ICON_SVG = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+  <path d="M19 7h-8v6h8V7zm2-4H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H3V5h18v14z"/>
+</svg>`;
+
+// Rotation icon SVG
+const ROTATE_ICON_SVG = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+  <path d="M7.11 8.53L5.7 7.11C4.8 8.27 4.24 9.61 4.07 11h2.02c.14-.87.49-1.72 1.02-2.47zM6.09 13H4.07c.17 1.39.72 2.73 1.62 3.89l1.41-1.42c-.52-.75-.87-1.59-1.01-2.47zm1.01 5.32c1.16.9 2.51 1.44 3.9 1.61V17.9c-.87-.15-1.71-.49-2.46-1.03L7.1 18.32zM13 4.07V1L8.45 5.55 13 10V6.09c2.84.48 5 2.94 5 5.91s-2.16 5.43-5 5.91v2.02c3.95-.49 7-3.85 7-7.93s-3.05-7.44-7-7.93z"/>
+</svg>`;
+
+// Check if we're on YouTube
+function isYouTube() {
+  return window.location.hostname.includes('youtube.com');
+}
+
+// Check if we're on YouTube Shorts
+function isYouTubeShorts() {
+  return window.location.hostname.includes('youtube.com') &&
+         window.location.pathname.includes('/shorts/');
+}
+
+// Inject YouTube native-style button
+function injectYouTubeButton() {
+  // Skip if already injected
+  if (document.querySelector(`.${PIP_BUTTON_YT_CLASS}`)) return;
+
+  // Find the right controls container
+  const rightControls = document.querySelector('.ytp-right-controls');
+  if (!rightControls) return;
+
+  // Find the autoplay button to insert after it
+  const autoplayBtn = rightControls.querySelector('.ytp-autonav-toggle-button-container') ||
+                      rightControls.querySelector('.ytp-right-controls-left');
+
+  // Create button
+  const btn = document.createElement('button');
+  btn.className = `ytp-button ${PIP_BUTTON_YT_CLASS}`;
+  btn.title = 'Picture-in-Picture Plus';
+  btn.innerHTML = PIP_ICON_SVG;
+
+  // Handle click
+  btn.addEventListener('click', async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (pipActive) {
+      await stopPiP();
+      btn.classList.remove('active');
+    } else {
+      const video = getVideo();
+      if (video) {
+        sourceVideo = video;
+        const success = await startPiP();
+        if (success) {
+          btn.classList.add('active');
+        }
+      }
+    }
+    updateAllButtons();
+  });
+
+  // Insert after autoplay button or at the beginning
+  if (autoplayBtn && autoplayBtn.nextSibling) {
+    rightControls.insertBefore(btn, autoplayBtn.nextSibling);
+  } else {
+    rightControls.insertBefore(btn, rightControls.firstChild);
+  }
+
+  return btn;
+}
+
+// Inject YouTube Shorts buttons (PiP + Rotation)
+function injectYouTubeShortsButtons() {
+  // Skip if already injected
+  if (document.querySelector('.pip-plus-shorts-container')) return;
+
+  // Find the action bar in the active Shorts video
+  const actionBar = document.querySelector('ytd-reel-video-renderer[is-active] reel-action-bar-view-model') ||
+                    document.querySelector('reel-action-bar-view-model');
+  if (!actionBar) return;
+
+  // Create container for our buttons
+  const container = document.createElement('div');
+  container.className = 'pip-plus-shorts-container';
+
+  // Create PiP button
+  const pipBtn = document.createElement('button');
+  pipBtn.className = 'pip-plus-shorts-btn pip-plus-shorts-pip';
+  pipBtn.innerHTML = `
+    <div class="pip-plus-icon-circle">${PIP_ICON_SVG}</div>
+    <span>PiP</span>
+  `;
+  pipBtn.title = 'Picture-in-Picture';
+
+  pipBtn.addEventListener('click', async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (pipActive) {
+      await stopPiP();
+    } else {
+      const video = getVideo();
+      if (video) {
+        sourceVideo = video;
+        await startPiP();
+      }
+    }
+    updateAllButtons();
+  });
+
+  // Create Rotation button
+  const rotateBtn = document.createElement('button');
+  rotateBtn.className = 'pip-plus-shorts-btn pip-plus-shorts-rotate';
+  rotateBtn.innerHTML = `
+    <div class="pip-plus-icon-circle">${ROTATE_ICON_SVG}</div>
+    <span>Rotate</span>
+  `;
+  rotateBtn.title = 'Rotation horizontale';
+
+  rotateBtn.addEventListener('click', async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    await toggleOrientation();
+    updateAllButtons();
+  });
+
+  container.appendChild(pipBtn);
+  container.appendChild(rotateBtn);
+
+  // Insert after the action bar
+  actionBar.parentElement.appendChild(container);
+}
+
+// Inject PiP button on a video
+function injectPiPButton(video) {
+  // Skip if already has button or is our pipVideo
+  if (video.dataset.pipButtonInjected || video === pipVideo) return;
+
+  // On YouTube Shorts, use sidebar buttons
+  if (isYouTubeShorts()) {
+    video.dataset.pipButtonInjected = 'true';
+    injectYouTubeShortsButtons();
+    return;
+  }
+
+  // On YouTube classic, use native-style button in controls
+  if (isYouTube()) {
+    video.dataset.pipButtonInjected = 'true';
+    injectYouTubeButton();
+    return;
+  }
+
+  // Skip small or hidden videos
+  const rect = video.getBoundingClientRect();
+  if (rect.width < 100 || rect.height < 100) return;
+
+  const computedStyle = window.getComputedStyle(video);
+  if (computedStyle.display === 'none' || computedStyle.visibility === 'hidden') return;
+
+  video.dataset.pipButtonInjected = 'true';
+
+  // Create button
+  const btn = document.createElement('button');
+  btn.className = PIP_BUTTON_CLASS;
+  btn.innerHTML = PIP_ICON_SVG;
+  btn.title = 'Picture-in-Picture';
+
+  // Handle click
+  btn.addEventListener('click', async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (pipActive) {
+      await stopPiP();
+      btn.classList.remove('active');
+    } else {
+      // Set this video as source before starting
+      sourceVideo = video;
+      const success = await startPiP();
+      if (success) {
+        btn.classList.add('active');
+      }
+    }
+    updateAllButtons();
+  });
+
+  // Find a suitable container with proper dimensions
+  let container = null;
+  let parent = video.parentElement;
+
+  // Search up to 5 levels for a container with actual height
+  for (let i = 0; i < 5 && parent; i++) {
+    const parentRect = parent.getBoundingClientRect();
+    const parentStyle = window.getComputedStyle(parent);
+
+    // Good container: has height, position relative/absolute, and no overflow hidden
+    if (parentRect.height > 50 &&
+        parentStyle.position !== 'static' &&
+        parentStyle.overflow !== 'hidden') {
+      container = parent;
+      break;
+    }
+
+    // Accept container with height even if overflow hidden, but prefer without
+    if (parentRect.height > 50 && parentStyle.position !== 'static' && !container) {
+      container = parent;
+    }
+
+    parent = parent.parentElement;
+  }
+
+  // If found a good container, use it
+  if (container) {
+    container.classList.add(PIP_CONTAINER_CLASS);
+    container.appendChild(btn);
+  } else {
+    // Fallback: position button absolutely on body, update position on scroll/resize
+    btn.style.position = 'fixed';
+    document.body.appendChild(btn);
+
+    const updatePosition = () => {
+      const videoRect = video.getBoundingClientRect();
+      btn.style.top = (videoRect.bottom - 46) + 'px';
+      btn.style.left = (videoRect.right - 46) + 'px';
+      btn.style.bottom = 'auto';
+      btn.style.right = 'auto';
+    };
+
+    updatePosition();
+
+    // Update on scroll and resize
+    const scrollHandler = () => requestAnimationFrame(updatePosition);
+    window.addEventListener('scroll', scrollHandler, { passive: true });
+    window.addEventListener('resize', scrollHandler, { passive: true });
+
+    // Store cleanup reference
+    video._pipButtonCleanup = () => {
+      window.removeEventListener('scroll', scrollHandler);
+      window.removeEventListener('resize', scrollHandler);
+    };
+
+    // Show on video hover using mouse events
+    video.addEventListener('mouseenter', () => btn.classList.add('visible'));
+    video.addEventListener('mouseleave', (e) => {
+      if (!e.relatedTarget || !btn.contains(e.relatedTarget)) {
+        btn.classList.remove('visible');
+      }
+    });
+    btn.addEventListener('mouseenter', () => btn.classList.add('visible'));
+    btn.addEventListener('mouseleave', () => btn.classList.remove('visible'));
+  }
+
+  // Store reference to button on video
+  video._pipButton = btn;
+}
+
+// Update all buttons state
+function updateAllButtons() {
+  // Update overlay buttons
+  document.querySelectorAll(`.${PIP_BUTTON_CLASS}`).forEach(btn => {
+    if (pipActive) {
+      btn.classList.add('visible');
+      // Only the active video's button should be marked active
+      const video = btn.parentElement?.querySelector('video');
+      if (video === sourceVideo) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    } else {
+      btn.classList.remove('active', 'visible');
+    }
+  });
+
+  // Update YouTube classic button
+  const ytBtn = document.querySelector(`.${PIP_BUTTON_YT_CLASS}`);
+  if (ytBtn) {
+    if (pipActive) {
+      ytBtn.classList.add('active');
+    } else {
+      ytBtn.classList.remove('active');
+    }
+  }
+
+  // Update YouTube Shorts buttons
+  const shortsPipBtn = document.querySelector('.pip-plus-shorts-pip');
+  if (shortsPipBtn) {
+    if (pipActive) {
+      shortsPipBtn.classList.add('active');
+    } else {
+      shortsPipBtn.classList.remove('active');
+    }
+  }
+
+  const shortsRotateBtn = document.querySelector('.pip-plus-shorts-rotate');
+  if (shortsRotateBtn) {
+    if (isHorizontal) {
+      shortsRotateBtn.classList.add('active');
+    } else {
+      shortsRotateBtn.classList.remove('active');
+    }
+  }
+}
+
+// Observe videos on page
+function observeVideosForOverlay() {
+  injectOverlayStyles();
+
+  // Inject on existing videos
+  const injectAll = () => {
+    document.querySelectorAll('video').forEach(video => {
+      if (video !== pipVideo) {
+        injectPiPButton(video);
+      }
+    });
+  };
+
+  injectAll();
+
+  // Observe new videos
+  const observer = new MutationObserver(() => {
+    injectAll();
+  });
+
+  observer.observe(document.body, { childList: true, subtree: true });
+
+  // Also check when videos become ready
+  document.addEventListener('loadedmetadata', (e) => {
+    if (e.target.tagName === 'VIDEO') {
+      injectPiPButton(e.target);
+    }
+  }, true);
+}
+
+// Start observing when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', observeVideosForOverlay);
+} else {
+  observeVideosForOverlay();
+}
+
 // Raccourcis clavier (chargés depuis le storage)
 let shortcuts = {
   pip: { ctrl: true, shift: true, alt: false, key: 'p' },
@@ -316,7 +786,10 @@ function observeFeed() {
 }
 
 // === EVENTS ===
-document.addEventListener('leavepictureinpicture', cleanup);
+document.addEventListener('leavepictureinpicture', () => {
+  cleanup();
+  updateAllButtons();
+});
 
 // === KEYBOARD SHORTCUTS ===
 document.addEventListener('keydown', async e => {
@@ -336,6 +809,7 @@ document.addEventListener('keydown', async e => {
   if (isPipShortcut) {
     e.preventDefault();
     pipActive ? await stopPiP() : await startPiP();
+    updateAllButtons();
     return;
   }
 
@@ -350,6 +824,7 @@ document.addEventListener('keydown', async e => {
   if (isRotationShortcut) {
     e.preventDefault();
     await toggleOrientation();
+    updateAllButtons();
     return;
   }
 });
@@ -357,8 +832,8 @@ document.addEventListener('keydown', async e => {
 // === COMMUNICATION WITH POPUP ===
 chrome.runtime.onMessage.addListener((req, _sender, sendResponse) => {
   if (req.action === 'togglePiP') {
-    if (pipActive) stopPiP().then(()=>sendResponse({ success: true, active: false }));
-    else startPiP().then(ok=>sendResponse({ success: ok, active: ok }));
+    if (pipActive) stopPiP().then(()=>{ updateAllButtons(); sendResponse({ success: true, active: false }); });
+    else startPiP().then(ok=>{ updateAllButtons(); sendResponse({ success: ok, active: ok }); });
     return true;
   }
   if (req.action === 'getPiPStatus') {
