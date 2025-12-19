@@ -205,7 +205,11 @@ function observeFeed() {
   const observer = new IntersectionObserver(entries => {
     entries.forEach(entry => {
       if (entry.isIntersecting && entry.target !== sourceVideo && entry.target.readyState >= 2) {
+        // Restore previous video visibility
+        restoreSourceVideo();
+        // Switch to new video and hide it
         sourceVideo = entry.target;
+        hideSourceVideo(sourceVideo);
       }
     });
   }, { threshold: 0.7 });
