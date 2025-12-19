@@ -24,7 +24,14 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content.js"],
+      "js": [
+        "js/pip-state.js",
+        "js/pip-utils.js",
+        "js/pip-core.js",
+        "js/pip-ui.js",
+        "js/pip-shortcuts.js",
+        "content.js"
+      ],
       "run_at": "document_end",
       "all_frames": false
     }
