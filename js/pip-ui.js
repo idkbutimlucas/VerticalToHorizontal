@@ -185,6 +185,36 @@ function injectOverlayStyles() {
       flex-direction: column;
       align-items: center;
     }
+
+    /* Netflix native-style button - matches Netflix player controls */
+    .pip-plus-netflix-wrapper {
+      display: flex;
+      align-items: center;
+    }
+    .pip-plus-netflix-btn {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 1rem;
+      margin: 0;
+      margin-top: -0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 1;
+      transition: transform 0.1s;
+    }
+    .pip-plus-netflix-btn:hover {
+      transform: scale(1.2);
+    }
+    .pip-plus-netflix-btn.active svg {
+      fill: #e50914;
+    }
+    .pip-plus-netflix-btn svg {
+      width: 2.75rem;
+      height: 2.75rem;
+      fill: white;
+    }
   `;
   document.head.appendChild(style);
 }
@@ -228,6 +258,79 @@ function injectYouTubeButton() {
   }
 
   return btn;
+}
+
+// === NETFLIX BUTTON ===
+
+let netflixObserver = null;
+
+function injectNetflixButton() {
+  // Always check if button exists in current DOM (Netflix re-renders controls)
+  if (document.querySelector('.pip-plus-netflix-btn')) return;
+
+  // Find the "next episode" button using data-uia attribute
+  const nextEpisodeBtn = document.querySelector('button[data-uia="control-next"]');
+  if (!nextEpisodeBtn) return;
+
+  // Netflix wraps each button in a DIV, the flex container is the grandparent
+  const btnWrapper = nextEpisodeBtn.parentElement;
+  const flexContainer = btnWrapper?.parentElement;
+  if (!flexContainer) return;
+
+  // Create a wrapper div like Netflix does
+  const wrapper = document.createElement('div');
+  wrapper.className = 'pip-plus-netflix-wrapper';
+  wrapper.style.cssText = 'display: flex; align-items: center;';
+
+  const btn = document.createElement('button');
+  btn.className = 'pip-plus-netflix-btn';
+  btn.title = 'Picture-in-Picture Plus';
+  btn.innerHTML = PIP_ICON_SVG;
+
+  btn.addEventListener('click', async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (pipActive) {
+      await stopPiP();
+    } else {
+      const video = getVideo();
+      if (video) {
+        sourceVideo = video;
+        await startPiP();
+      }
+    }
+    updateAllButtons();
+  });
+
+  wrapper.appendChild(btn);
+
+  // Insert wrapper after the next episode button's wrapper
+  if (btnWrapper.nextSibling) {
+    flexContainer.insertBefore(wrapper, btnWrapper.nextSibling);
+  } else {
+    flexContainer.appendChild(wrapper);
+  }
+
+  // Sync state immediately
+  btn.classList.toggle('active', pipActive);
+
+  return btn;
+}
+
+function observeNetflixControls() {
+  if (netflixObserver) return;
+
+  // Netflix removes/adds control buttons dynamically - observe the whole document
+  netflixObserver = new MutationObserver(() => {
+    // Try to inject when controls appear
+    if (document.querySelector('button[data-uia="control-next"]') &&
+        !document.querySelector('.pip-plus-netflix-btn')) {
+      injectNetflixButton();
+    }
+  });
+
+  netflixObserver.observe(document.body, { childList: true, subtree: true });
 }
 
 // === TIKTOK BUTTONS ===
@@ -470,6 +573,14 @@ function injectPiPButton(video) {
     return;
   }
 
+  // Netflix: controls are destroyed/recreated dynamically
+  if (isNetflixWatch()) {
+    observeNetflixControls();
+    injectNetflixButton();
+    video.dataset.pipButtonInjected = 'true';
+    return;
+  }
+
   injectOverlayButton(video);
 }
 
@@ -516,6 +627,12 @@ function updateAllButtons() {
   document.querySelectorAll('.pip-plus-tiktok-rotate').forEach(btn => {
     btn.classList.toggle('active', isHorizontal);
   });
+
+  // Netflix button
+  const netflixBtn = document.querySelector('.pip-plus-netflix-btn');
+  if (netflixBtn) {
+    netflixBtn.classList.toggle('active', pipActive);
+  }
 }
 
 // === OBSERVE VIDEOS FOR UI ===

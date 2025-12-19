@@ -15,6 +15,15 @@ function isTikTok() {
   return window.location.hostname.includes('tiktok.com');
 }
 
+function isNetflix() {
+  return window.location.hostname.includes('netflix.com');
+}
+
+function isNetflixWatch() {
+  return window.location.hostname.includes('netflix.com') &&
+         window.location.pathname.includes('/watch/');
+}
+
 // === VIDEO DETECTION ===
 
 function getVideo() {
