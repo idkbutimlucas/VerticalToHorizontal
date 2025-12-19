@@ -24,6 +24,10 @@ function isNetflixWatch() {
          window.location.pathname.includes('/watch/');
 }
 
+function isTwitch() {
+  return window.location.hostname.includes('twitch.tv');
+}
+
 // === VIDEO DETECTION ===
 
 function getVideo() {

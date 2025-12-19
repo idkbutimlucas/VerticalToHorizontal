@@ -215,6 +215,16 @@ function injectOverlayStyles() {
       height: 2.75rem;
       fill: white;
     }
+
+    /* Twitch - only override specific styles for our button */
+    .pip-plus-twitch-btn.active svg {
+      fill: #9147ff;
+    }
+    .pip-plus-twitch-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: white;
+    }
   `;
   document.head.appendChild(style);
 }
@@ -331,6 +341,81 @@ function observeNetflixControls() {
   });
 
   netflixObserver.observe(document.body, { childList: true, subtree: true });
+}
+
+// === TWITCH BUTTON ===
+
+let twitchObserver = null;
+
+function injectTwitchButton() {
+  // Always check if button exists in current DOM (Twitch may re-render controls)
+  if (document.querySelector('.pip-plus-twitch-btn')) return;
+
+  // Find the settings button
+  const settingsBtn = document.querySelector('button[data-a-target="player-settings-button"]');
+  if (!settingsBtn) return;
+
+  // Find the wrapper DIV that contains the settings button
+  const settingsWrapper = settingsBtn.closest('.InjectLayout-sc-1i43xsx-0');
+  if (!settingsWrapper) return;
+
+  // Create wrapper structure matching Twitch's native buttons exactly
+  const outerWrapper = document.createElement('div');
+  outerWrapper.className = 'InjectLayout-sc-1i43xsx-0 iDMNUO';
+
+  const innerWrapper = document.createElement('div');
+  innerWrapper.className = 'Layout-sc-1xcs6mc-0 ScLayoutCssVars-sc-1pn65j5-0 jfyitl TtKWF';
+
+  const btn = document.createElement('button');
+  btn.className = 'ScCoreButton-sc-ocjdkq-0 iPkwTD ScButtonIcon-sc-9yap0r-0 dcNXJO pip-plus-twitch-btn';
+  btn.title = 'Picture-in-Picture Plus';
+  btn.setAttribute('aria-label', 'Picture-in-Picture');
+  btn.innerHTML = PIP_ICON_SVG;
+
+  btn.addEventListener('click', async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (pipActive) {
+      await stopPiP();
+    } else {
+      const video = getVideo();
+      if (video) {
+        sourceVideo = video;
+        await startPiP();
+      }
+    }
+    updateAllButtons();
+  });
+
+  innerWrapper.appendChild(btn);
+  outerWrapper.appendChild(innerWrapper);
+
+  // Insert wrapper after the settings button's wrapper
+  if (settingsWrapper.nextSibling) {
+    settingsWrapper.parentElement.insertBefore(outerWrapper, settingsWrapper.nextSibling);
+  } else {
+    settingsWrapper.parentElement.appendChild(outerWrapper);
+  }
+
+  // Sync state immediately
+  btn.classList.toggle('active', pipActive);
+
+  return btn;
+}
+
+function observeTwitchControls() {
+  if (twitchObserver) return;
+
+  // Twitch may re-render controls - observe the player area
+  twitchObserver = new MutationObserver(() => {
+    if (document.querySelector('button[data-a-target="player-settings-button"]') &&
+        !document.querySelector('.pip-plus-twitch-btn')) {
+      injectTwitchButton();
+    }
+  });
+
+  twitchObserver.observe(document.body, { childList: true, subtree: true });
 }
 
 // === TIKTOK BUTTONS ===
@@ -581,6 +666,14 @@ function injectPiPButton(video) {
     return;
   }
 
+  // Twitch: controls may be re-rendered dynamically
+  if (isTwitch()) {
+    observeTwitchControls();
+    injectTwitchButton();
+    video.dataset.pipButtonInjected = 'true';
+    return;
+  }
+
   injectOverlayButton(video);
 }
 
@@ -632,6 +725,12 @@ function updateAllButtons() {
   const netflixBtn = document.querySelector('.pip-plus-netflix-btn');
   if (netflixBtn) {
     netflixBtn.classList.toggle('active', pipActive);
+  }
+
+  // Twitch button
+  const twitchBtn = document.querySelector('.pip-plus-twitch-btn');
+  if (twitchBtn) {
+    twitchBtn.classList.toggle('active', pipActive);
   }
 }
 
