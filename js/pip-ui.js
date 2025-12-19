@@ -131,6 +131,60 @@ function injectOverlayStyles() {
       flex-direction: column;
       align-items: center;
     }
+
+    /* TikTok action button style - matches native buttons */
+    .pip-plus-tiktok-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      padding: 0;
+      margin: 8px 0 0 0;
+      color: white;
+      font-size: 12px;
+      font-family: 'TikTokFont', 'Proxima Nova', 'Arial', sans-serif;
+      width: 48px;
+      min-height: 78px;
+    }
+    .pip-plus-tiktok-btn:hover {
+      opacity: 0.8;
+    }
+    .pip-plus-tiktok-btn.active svg {
+      fill: #fe2c55;
+    }
+    .pip-plus-tiktok-btn svg {
+      width: 28px;
+      height: 28px;
+      fill: white;
+    }
+    .pip-plus-tiktok-btn .pip-plus-tiktok-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .pip-plus-tiktok-btn:hover .pip-plus-tiktok-icon {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    .pip-plus-tiktok-btn.active .pip-plus-tiktok-icon {
+      background: rgba(254, 44, 85, 0.2);
+    }
+    .pip-plus-tiktok-btn span {
+      margin-top: 6px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .pip-plus-tiktok-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
   `;
   document.head.appendChild(style);
 }
@@ -174,6 +228,70 @@ function injectYouTubeButton() {
   }
 
   return btn;
+}
+
+// === TIKTOK BUTTONS ===
+
+function injectTikTokButtons() {
+  // Find all TikTok action bars and inject buttons into each one that doesn't have them
+  const actionBars = document.querySelectorAll('[class*="DivActionItemContainer"], [class*="SectionActionBarContainer"]');
+
+  actionBars.forEach(actionBar => {
+    // Skip if this action bar already has our buttons
+    if (actionBar.querySelector('.pip-plus-tiktok-container')) return;
+
+    const container = document.createElement('div');
+    container.className = 'pip-plus-tiktok-container';
+
+    // PiP button
+    const pipBtn = document.createElement('button');
+    pipBtn.className = 'pip-plus-tiktok-btn pip-plus-tiktok-pip';
+    pipBtn.innerHTML = `
+      <div class="pip-plus-tiktok-icon">${PIP_ICON_SVG}</div>
+      <span>PiP</span>
+    `;
+    pipBtn.title = 'Picture-in-Picture';
+
+    pipBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (pipActive) {
+        await stopPiP();
+      } else {
+        const video = getVideo();
+        if (video) {
+          sourceVideo = video;
+          await startPiP();
+        }
+      }
+      updateAllButtons();
+    });
+
+    // Rotation button
+    const rotateBtn = document.createElement('button');
+    rotateBtn.className = 'pip-plus-tiktok-btn pip-plus-tiktok-rotate';
+    rotateBtn.innerHTML = `
+      <div class="pip-plus-tiktok-icon">${ROTATE_ICON_SVG}</div>
+      <span>Rotate</span>
+    `;
+    rotateBtn.title = 'Rotation horizontale';
+
+    rotateBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      await toggleOrientation();
+      updateAllButtons();
+    });
+
+    container.appendChild(pipBtn);
+    container.appendChild(rotateBtn);
+    actionBar.appendChild(container);
+
+    // Sync state immediately for newly injected buttons
+    pipBtn.classList.toggle('active', pipActive);
+    rotateBtn.classList.toggle('active', isHorizontal);
+  });
 }
 
 // === YOUTUBE SHORTS BUTTONS ===
@@ -328,7 +446,17 @@ function injectOverlayButton(video) {
 // === INJECT BUTTON (ROUTER) ===
 
 function injectPiPButton(video) {
-  if (video.dataset.pipButtonInjected || video === pipVideo) return;
+  if (video === pipVideo) return;
+
+  // TikTok has multiple action bars (one per video), always try to inject
+  if (isTikTok()) {
+    injectTikTokButtons();
+    video.dataset.pipButtonInjected = 'true';
+    return;
+  }
+
+  // For other platforms, skip if already injected
+  if (video.dataset.pipButtonInjected) return;
 
   if (isYouTubeShorts()) {
     video.dataset.pipButtonInjected = 'true';
@@ -379,6 +507,15 @@ function updateAllButtons() {
   if (shortsRotateBtn) {
     shortsRotateBtn.classList.toggle('active', isHorizontal);
   }
+
+  // TikTok buttons (multiple per page)
+  document.querySelectorAll('.pip-plus-tiktok-pip').forEach(btn => {
+    btn.classList.toggle('active', pipActive);
+  });
+
+  document.querySelectorAll('.pip-plus-tiktok-rotate').forEach(btn => {
+    btn.classList.toggle('active', isHorizontal);
+  });
 }
 
 // === OBSERVE VIDEOS FOR UI ===
