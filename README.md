@@ -1,40 +1,44 @@
 # 📺 Picture-in-Picture Plus - Rotate Vertical Shorts
 
-**Universal Picture-in-Picture extension for Chrome with automatic vertical video detection and optional rotation.**
+**Watch any video in Picture-in-Picture mode. Rotate horizontal videos on TikTok & Shorts with one click.**
 
-Transform any web video into a floating Picture-in-Picture window. Automatically detects vertical videos (TikTok, YouTube Shorts) and offers real-time rotation to horizontal format.
-
-[![Version](https://img.shields.io/badge/version-1.0.2-blue.svg)](https://github.com/idkbutimlucas/VerticalToHorizontal)
+[![Version](https://img.shields.io/badge/version-1.0.3-blue.svg)](https://github.com/idkbutimlucas/VerticalToHorizontal)
 [![Chrome](https://img.shields.io/badge/chrome-extension-green.svg)](https://github.com/idkbutimlucas/VerticalToHorizontal)
 [![License](https://img.shields.io/badge/license-MIT-orange.svg)](LICENSE)
 
-## ✨ Features
+Sometimes, TikToks or YouTube Shorts are uploaded in landscape format — easy to watch on a phone you can rotate, but awkward on a desktop or laptop where you can't flip your screen.
 
-### 🌍 Universal Support
-- **Works on ALL websites** with video content (YouTube, TikTok, Netflix, Twitch, Vimeo, etc.)
-- Intelligent video detection with automatic selection
-- Classic PiP mode for standard videos
-- Canvas streaming mode for feed-based platforms
+That's why this extension was created: to bring a comfortable viewing experience for every video, directly on your computer.
 
-### 📱 Vertical Video Handling
-- **Automatic detection** of vertical videos
-- **Real-time rotation toggle** (switch while PiP is active)
-- Perfect for TikTok and YouTube Shorts
-- Maintains aspect ratio and quality
+Picture-in-Picture Plus has evolved into a powerful everyday Picture-in-Picture tool, perfect for multitasking — meetings, gaming, studying, or simply watching your favorite content while browsing.
 
-### ⚙️ Customizable
-- **Custom keyboard shortcuts** via settings page
-- Default shortcuts: `Ctrl+Shift+P` (PiP) and `Ctrl+Shift+R` (Rotation)
-- Settings sync across devices via Chrome storage
-- Mac/Windows automatic modifier detection (⌘ vs Ctrl)
+## ✨ Main Features
 
-### 🎯 Smart Technology
-- **TikTok/YouTube Shorts feed tracking**: Automatically follows video changes as you scroll
-- IntersectionObserver for smooth feed detection
-- Platform-specific optimizations
-- Native media controls integration
+- 🌍 **Works on ALL sites** — YouTube, TikTok, Netflix, Twitch, Vimeo, and more
+- 🔄 **Rotate horizontal videos on vertical feeds** — perfect for landscape TikToks, Shorts, and Reels
+- 🧠 **Automatic detection** — recognizes when rotation is needed
+- 🎮 **Custom shortcuts**: Toggle PiP (`Ctrl+Shift+P`) and rotation (`Ctrl+Shift+E`)
+- ⚙️ **Settings sync** — across all your Chrome devices
+- 🪄 **Feed tracking** — PiP follows videos automatically when scrolling
+
+## 💡 Why you'll love it
+
+Unlike regular Picture-in-Picture tools, Picture-in-Picture Plus adapts to video orientation and fits your screen perfectly.
+
+No more black bars, awkward layouts, or cropped content — just smooth, flexible viewing.
+
+## 🧰 How to use
+
+1. Open a website with video content
+2. Press `Ctrl+Shift+P` (or `⌘⇧P` on Mac) to start Picture-in-Picture
+3. For horizontal videos on vertical feeds, press `Ctrl+Shift+E` to rotate
+4. Enjoy your floating, perfectly oriented video!
 
 ## 🚀 Installation
+
+### From Chrome Web Store
+
+🔜 Coming soon - The extension will be published on the Chrome Web Store
 
 ### From Source (Developer Mode)
 
@@ -53,216 +57,52 @@ git clone https://github.com/idkbutimlucas/VerticalToHorizontal.git
 
 6. ✅ The extension is now installed!
 
-### From Chrome Web Store
-
-🔜 Coming soon - The extension will be published on the Chrome Web Store
-
-## 🎮 Usage
-
-### Quick Start
-
-1. **Navigate to any video website** (YouTube, TikTok, Netflix, etc.)
-2. **Press `Ctrl+Shift+P`** (or `⌘⇧P` on Mac) to activate PiP
-3. For vertical videos: **Press `Ctrl+Shift+R`** to toggle rotation
-4. **Enjoy your floating video!**
-
-### Via Extension Popup
-
-1. Click the extension icon in your toolbar
-2. Click **"Enable PiP"** to start Picture-in-Picture
-3. For vertical videos, click **"Enable Rotation"** before or during PiP
-4. Use the settings link to customize keyboard shortcuts
-
-### Keyboard Shortcuts (Default)
-
-| Action | Mac | Windows/Linux |
-|--------|-----|---------------|
-| Toggle PiP | `⌘⇧P` | `Ctrl+Shift+P` |
-| Toggle Rotation | `⌘⇧R` | `Ctrl+Shift+R` |
-
-**💡 Tip:** Customize shortcuts in the extension settings page!
-
-## 🎨 How It Works
-
-### Two Modes
-
-**1. Classic PiP Mode** (Default for standard videos)
-- Uses native browser Picture-in-Picture API
-- Lightweight and fast
-- Direct video element PiP
-- Best for: YouTube videos, Netflix, streaming sites
-
-**2. Canvas Streaming Mode** (For vertical videos and feeds)
-- HTML5 Canvas captures and transforms video frames
-- Real-time rotation support
-- Feed tracking for TikTok/YouTube Shorts
-- Best for: TikTok, YouTube Shorts, Instagram Reels
-
-### Automatic Selection
-
-The extension intelligently chooses the mode based on:
-- Platform detection (TikTok, YouTube Shorts → Canvas mode)
-- Video orientation (vertical + rotation enabled → Canvas mode)
-- Otherwise → Classic PiP mode for best performance
-
-## 🎛️ Settings
-
-Access settings by:
-1. Clicking the extension icon
-2. Clicking **"⚙️ Customize shortcuts"** at the bottom
-
-### Customizable Options
-
-- **PiP shortcut**: Choose your modifiers (Ctrl, Shift, Alt) + key
-- **Rotation shortcut**: Fully customizable combination
-- **Settings sync**: Automatically synced across all your devices
-
-## 🔧 Advanced Features
-
-### Media Controls
-
-When PiP is active, use:
-- **Play/Pause**: Control playback
-- **Skip Back**: -10 seconds
-- **Skip Forward**: +10 seconds
-
-These controls work:
-- In the PiP window itself
-- With your keyboard media keys
-- On Mac Touch Bar
-
-### Feed Following (TikTok/YouTube Shorts)
-
-When using TikTok or YouTube Shorts:
-1. Activate PiP on a video
-2. Scroll to the next video
-3. The PiP automatically updates to show the new video
-4. Keep scrolling - the PiP follows your feed!
-
 ## 📋 Supported Platforms
 
-### ✅ Fully Tested
-- **TikTok** (with feed tracking)
+### ✅ Native Integration
 - **YouTube** (regular videos + Shorts with feed tracking)
-- **Netflix**
-- **Twitch**
-- **Vimeo**
+- **TikTok** (with feed tracking and rotation)
+- **Netflix** (native player button)
+- **Twitch** (native player button)
 
-### 🌐 Universal Support
+### 🌐 Other Websites
 Works on ANY website with `<video>` elements, including:
+- Vimeo
 - Streaming platforms
 - Social media
 - News sites
 - Educational platforms
-- Video hosting services
-
-## ⚠️ Known Limitations
-
-### Audio
-- Audio plays from the original page, not the PiP window
-- This is a browser limitation for canvas-based PiP
-- Classic PiP mode has full audio support
-
-### Performance
-- Canvas mode uses some CPU (~30 FPS rendering)
-- Classic mode is very lightweight
-- Performance optimizations are ongoing
-
-### Compatibility
-- **Chrome/Edge**: Full support ✅
-- **Firefox**: Not compatible (different extension API)
-- **Safari**: Not compatible (different extension system)
-
-## 🐛 Troubleshooting
-
-### Extension not working
-
-1. Reload the extension in `chrome://extensions/` → Click ↻
-2. Refresh the webpage (F5)
-3. Open DevTools console (F12) to check for errors
-
-### No video in PiP window
-
-- Make sure the video is loaded and playing
-- Try clicking on the video first
-- Check if the page allows PiP (some sites block it)
-
-### "Reload page (F5)" message
-
-- The content script needs to load
-- Simply refresh the page with F5
-- This happens after installing/updating the extension
-
-### Rotation not showing
-
-- Rotation only appears for vertical videos (height > width)
-- Make sure you're on a video page
-- Try refreshing if the video just loaded
-
-## 🛠️ Development
-
-### Project Structure
-
-```
-VerticalToHorizontal/
-├── manifest.json       # Extension configuration
-├── content.js         # Main video detection and PiP logic
-├── popup.html         # Extension popup interface
-├── popup.js           # Popup functionality
-├── options.html       # Settings page
-├── options.js         # Settings logic
-└── icons/            # Extension icons
-```
-
-### Key Technologies
-
-- **Manifest V3**: Latest Chrome extension API
-- **IntersectionObserver**: Efficient feed tracking
-- **Canvas API**: Video transformation and rotation
-- **MediaStream API**: Canvas to video streaming
-- **Chrome Storage API**: Settings sync
-
-### Building from Source
-
-```bash
-# Clone the repository
-git clone https://github.com/idkbutimlucas/VerticalToHorizontal.git
-
-# Navigate to directory
-cd VerticalToHorizontal
-
-# Load in Chrome as unpacked extension
-# (See installation instructions above)
-```
 
 ## 📝 Changelog
 
-### v1.0.0 - Initial Public Release (Current)
-- ✨ Universal video PiP for all websites
+### v1.0.3 - Native Platform Integrations (Current)
+
+- ✨ Native PiP button on TikTok (in action bar with rotation)
+- ✨ Native PiP button on Netflix (next to player controls)
+- ✨ Native PiP button on Twitch (after settings button)
+- 🔧 Improved button alignment and styling per platform
+
+### v1.0.0 - Initial Public Release
+
+- ✨ Picture-in-Picture for all websites
 - ✨ Customizable keyboard shortcuts
 - ✨ Real-time rotation toggle
 - ✨ Automatic vertical video detection
 - ✨ Smart mode selection (Classic vs Canvas)
 - ✨ Feed tracking for TikTok/YouTube Shorts
-- ✨ Complete English localization
 - ✨ Settings page with sync
-- 🔧 Platform-specific optimizations
-- 🎨 Modern, clean UI
 
 ## 👨‍💻 Author
 
 **Lucas Hochart**
 
-- Website: [lucashochart.fr](https://lucashochart.fr)
+- 🌐 Website: [lucashochart.fr](https://lucashochart.fr)
 - GitHub: [@idkbutimlucas](https://github.com/idkbutimlucas)
 
-## 🤝 Contributing
+## 🔒 Privacy
 
-Contributions are welcome! Feel free to:
-- Report bugs
-- Suggest new features
-- Submit pull requests
-- Improve documentation
+This extension does not collect or share personal data.
+All settings are stored locally or synced via your Google account.
 
 ## 📄 License
 
@@ -272,7 +112,6 @@ MIT License - See [LICENSE](LICENSE) file for details
 
 - Built with [Claude Code](https://claude.com/claude-code)
 - Icons and design inspired by modern Chrome extensions
-- Thanks to the open-source community
 
 ---
 

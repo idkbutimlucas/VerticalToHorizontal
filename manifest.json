@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Picture-in-Picture Plus - Rotate Vertical Shorts",
-  "version": "1.0.2",
-  "description": "Universal Picture-in-Picture for all web videos with optional rotation for vertical videos",
+  "version": "1.0.3",
+  "description": "Picture-in-Picture for all web videos with optional rotation for vertical videos",
   "author": "Lucas Hochart",
   "homepage_url": "https://lucashochart.fr",
   "permissions": [
